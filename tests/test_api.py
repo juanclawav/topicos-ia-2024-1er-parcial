@@ -15,7 +15,6 @@ TEST_IMAGE_PATH = fr"test_image.jpg"
 def test_image():
     with open(TEST_IMAGE_PATH, "rb") as f:
         return f.read()
-
 def test_get_model_info():
     expected_data = {
         "model_name": "Gun detector",
@@ -99,3 +98,34 @@ def test_annotate(test_image):
     assert response.headers["content-type"] == "image/jpeg"
     with open(fr"annotated_combined.jpg", "wb") as f:
         f.write(response.content)
+def test_match_gun_bbox():
+    segment = [[0, 0], [0, 10], [10, 10], [10, 0], [20, 10]]
+    bboxes = [[10, 0, 25, 20], [80, 90, 100, 110]]
+    max_distance = 15 
+    expected_bbox = [10, 0, 25, 20]
+    matched_bbox = match_gun_bbox(segment, bboxes, max_distance)
+    assert matched_bbox == expected_bbox
+
+def test_annotate_detection():
+    image_array = np.zeros((100, 100, 3), dtype=np.uint8)
+    detection = Detection(
+        pred_type=PredictionType.object_detection,
+        n_detections=1,
+        boxes=[[25, 25, 75, 75]],
+        labels=['pistol'],
+        confidences=[0.95]
+    )
+    annotated_img = annotate_detection(image_array, detection)
+    assert not np.array_equal(annotated_img, image_array)
+
+def test_annotate_segmentation():
+    image_array = np.zeros((100, 100, 3), dtype=np.uint8)
+    segmentation = Segmentation(
+        pred_type=PredictionType.segmentation,
+        n_detections=1,
+        polygons=[[[30, 30], [30, 70], [70, 70], [70, 30]]],
+        boxes=[[30, 30, 70, 70]],
+        labels=['safe']
+    )
+    annotated_img = annotate_segmentation(image_array, segmentation)
+    assert not np.array_equal(annotated_img, image_array)

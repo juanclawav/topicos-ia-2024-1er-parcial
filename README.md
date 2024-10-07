@@ -1,62 +1,52 @@
-# topicos-ia-2024-1er-parcial
+# Primer Parcial, Topicos Selectos en Inteligencia Artificial
 
+**Nombre:** Juan Claudio Carrasco Tapia
 
-## instrucciones
+**Código:** 60715
 
-### Completar implementacion del detector
+==========================
 
-#### match gun bbox
+Este proyecto es un sistema basado en visión por computadora diseñado para detectar armas y segmentar personas en imágenes. Utiliza modelos de aprendizaje profundo para identificar y anotar objetos de interés en datos visuales.
 
-Esta función servirá para realizar el match entre un segmento y un arma cercana. El objetivo de esta función es de encontrar el arma más cercana a un segmento dado en base a un umbral de distancia máxima.
+**Descripción del proyecto**
+---------------------------
 
-La función deberá retornar el bounding box del arma más cercana a un segmento siempre y cuando la distancia entre el segmento correspondiente a una persona y el bounding box del arma sea menor a una distancia máxima de acercamiento. Si el bounding box más cercano es mayor a la distancia máxima, la función deberá retornar None.
+El sistema utiliza una combinación de técnicas de detección de objetos y segmentación de imágenes para detectar armas y segmentar personas en imágenes. Está construido en Python y se basa en el modelo de detección de objetos YOLO (You Only Look Once) de Ultralytics y en el framework FastAPI para construir una API web.
 
-#### segment people
+**Características clave**
+-------------------------
 
-Usted deberá implementar el método GunDetector.segment_people() el cual tiene la tarea de segmentar personas en la imagen siguiendo las siguientes reglas:
+* **Detección de armas**: El sistema puede detectar armas en imágenes, proporcionando un bounding box y una etiqueta para cada objeto detectado.
+* **Segmentación de personas**: El sistema puede segmentar personas en imágenes, proporcionando una máscara para cada individuo.
+* **Anotación**: El sistema puede anotar imágenes con resultados de detección y segmentación.
+* **API web**: El sistema proporciona una API web para cargar imágenes y obtener resultados de detección y segmentación.
 
- 1. El método deberá retornar un objeto de tipo Segmentation
- 2. Los segmentos a retornar deberán corresponder solamente con segmentos de personas.
- 3. Existen 2 etiquetas posibles para los segmentos de personas: 'safe' y 'danger'.
- 4. La etiqueta 'safe' o 'danger' deberá ser asignada de acuerdo a la proximidad del segmento con un arma previamente detectada.
- 5. Todos aquellos segmentos que estén cerca a un arma (pistola o rifle) serán etiquetados como 'danger', aquellos segmentos que estén alejados, 'safe'.
+**Tareas de implementación**
+---------------------------
 
+### Completar la implementación del detector
 
- 
-#### annotate segmentation
-La funci'on annotate_segmentation deberá realizar anotaciones sobre la imagen origen en base a las predicciones de segmentación siguiendo las siguientes reglas:
-
- 1. Todos los segmentos de personas en la categoria 'danger' deberán ser anotados con un tinte rojo.
- 2. Todos los segmentos de personas en la categoria 'safe' deberán ser anotados con un tinte verde.
- 3. Existe un parámetro opcional llamado draw_boxes, si el valor del parámetro es True, deberá dibujar además los bounding boxes y etiquetas del sgmento correspondiente.
-
-Ejemplos:
-
-![alt text](sample_out1.jpg)
-
-![alt text](sample_out2.jpg)
-
-![alt text](sample_out3.jpg)
+* **Implementar la función `match_gun_bbox`**: para hacer coincidir armas detectadas con segmentos de personas en base a la proximidad.
+* **Implementar la función `segment_people`**: para segmentar personas en imágenes basadas en su proximidad a armas detectadas.
+* **Implementar la función `annotate_segmentation`**: para anotar la imagen con resultados de segmentación.
 
 ### Implementar endpoints
 
-Una vez completadas las anteriores tareas, usted deberá implementar los siguientes endpoints en la aplicación de FastAPI:
+* **Implementar el endpoint `/detect_people`**: para devolver un objeto de segmentación.
+* **Implementar el endpoint `/annotate_people`**: para devolver una imagen anotada.
+* **Implementar el endpoint `/detect`**: para devolver tanto resultados de detección como segmentación.
+* **Implementar el endpoint `/annotate`**: para devolver una imagen anotada con resultados de detección y segmentación.segmentadas.
 
-#### POST: /detect_people
-Este endpoint deberá devolver un objeto de tipo Segmentation correspondiente a la predicción de la segmentación de personas en las categorias 'safe' y 'danger'.
+**Detalles técnicos**
+---------------------
 
-#### POST: /annotate_people
-Este endpoint deberá retornar una imagen con la anotación de la segmentacion, agregue un parámetro opcional para decidir si se debe anotar también los bounding boxes.
+* El proyecto está construido en Python 3.x y se basa en bibliotecas populares como PyTorch, OpenCV y FastAPI.
+* El modelo de detección de objetos está basado en la arquitectura YOLO de Ultralytics, que proporciona un rendimiento de vanguardia para tareas de detección de objetos.
+* El modelo de segmentación de imágenes está basado en una arquitectura de aprendizaje profundo que proporciona resultados de segmentación precisos.
 
-#### POST: /detect
-Este endpoint deberá combinar ambos tipos de predicciones Detection y Segmentation en un solo response. Es decir, para una imagen deberá retornar ambos, la detección de las armas y la segmentación de las personas.
+**Casos de uso**
+----------------
 
-#### POST: /annotate
-Este endpoint, deberá combinar las anotaciones tanto de la detección de armas como la de la segmentación en una sola imagen resultado.
-
-#### POST: /guns
-Este endpoint deberá devolver una lista de objetos de tipo Gun con la información del tipo de arma y ubicación de la misma en la imagen (en pixeles). La ubicación deberá corresponder con el centro del bounding box de detección. Este objeto está declarado como Gun en el archivo src.models
-
-
-### POST: /people
-Este endpoint deberá devolver una lista de objetos de tipo Person con la información de la categoría de la persona, ubicación y área en pixeles ocupada por el segmento. La ubicación corresponde con el centro del segmento. El objeto está declarado como Person en el archivo src.models
+* **Seguridad y vigilancia**: El sistema puede ser utilizado para detectar armas en imágenes y videos, proporcionando una herramienta valiosa para aplicaciones de seguridad y vigilancia.
+* **Policía**: El sistema puede ser utilizado para analizar imágenes y videos recopilados durante investigaciones, proporcionando una herramienta poderosa para las agencias de policía.
+* **Investigación**: El sistema puede ser utilizado para estudiar la prevalencia de armas en diferentes entornos y contextos, proporcionando información valiosa para investigadores y políticos.
