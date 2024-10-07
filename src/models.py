@@ -21,6 +21,7 @@ class PersonType(str, Enum):
 class PixelLocation(BaseModel):
     x: int
     y: int
+    
 
 
 class GeneralPrediction(BaseModel):

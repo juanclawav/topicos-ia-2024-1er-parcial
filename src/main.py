@@ -7,6 +7,7 @@ from functools import cache
 from PIL import Image, UnidentifiedImageError
 from src.predictor import GunDetector, Detection, Segmentation, annotate_detection, annotate_segmentation
 from src.config import get_settings
+from src.models import Gun, Person, PixelLocation, GunType, PersonType, PredictionType, Detection, Segmentation, GunType, PersonType
 
 SETTINGS = get_settings()
 
@@ -18,6 +19,66 @@ def get_gun_detector() -> GunDetector:
     print("Creating model...")
     return GunDetector()
 
+@app.post("/detect_people")
+def detect_people(
+    threshold: float = 0.5,
+    max_distance: int = 10,
+    file: UploadFile = File(...),
+    detector: GunDetector = Depends(get_gun_detector),
+) -> Segmentation:
+    detection, img = detect_uploadfile(detector, file, threshold)
+    segmentation = detector.segment_people(img, threshold, max_distance)
+    return segmentation
+
+@app.post("/annotate_people")
+def annotate_people(
+    threshold: float = 0.5,
+    max_distance: int = 10,
+    draw_boxes: bool = True,
+    file: UploadFile = File(...),
+    detector: GunDetector = Depends(get_gun_detector),
+) -> Response:
+    detection, img = detect_uploadfile(detector, file, threshold)
+    segmentation = detector.segment_people(img, threshold, max_distance)
+    annotated_img = annotate_segmentation(img, segmentation, draw_boxes)
+
+    # Convert to Pillow image and return response
+    img_pil = Image.fromarray(annotated_img)
+    image_stream = io.BytesIO()
+    img_pil.save(image_stream, format="JPEG")
+    image_stream.seek(0)
+    return Response(content=image_stream.read(), media_type="image/jpeg")
+
+@app.post("/detect")
+def detect(
+    threshold: float = 0.5,
+    max_distance: int = 10,
+    file: UploadFile = File(...),
+    detector: GunDetector = Depends(get_gun_detector),
+) -> dict:
+    detection, img = detect_uploadfile(detector, file, threshold)
+    segmentation = detector.segment_people(img, threshold, max_distance)
+    return {"detection": detection, "segmentation": segmentation}
+
+@app.post("/annotate")
+def annotate(
+    threshold: float = 0.5,
+    max_distance: int = 10,
+    draw_boxes: bool = True,
+    file: UploadFile = File(...),
+    detector: GunDetector = Depends(get_gun_detector),
+) -> Response:
+    detection, img = detect_uploadfile(detector, file, threshold)
+    segmentation = detector.segment_people(img, threshold, max_distance)
+    annotated_img = annotate_detection(img, detection)
+    annotated_img = annotate_segmentation(annotated_img, segmentation, draw_boxes)
+
+    # Convert to Pillow image and return response
+    img_pil = Image.fromarray(annotated_img)
+    image_stream = io.BytesIO()
+    img_pil.save(image_stream, format="JPEG")
+    image_stream.seek(0)
+    return Response(content=image_stream.read(), media_type="image/jpeg")
 
 def detect_uploadfile(detector: GunDetector, file, threshold) -> tuple[Detection, np.ndarray]:
     img_stream = io.BytesIO(file.file.read())
@@ -56,8 +117,6 @@ def detect_guns(
     results, _ = detect_uploadfile(detector, file, threshold)
 
     return results
-
-
 @app.post("/annotate_guns")
 def annotate_guns(
     threshold: float = 0.5,
