@@ -50,3 +50,12 @@ El sistema utiliza una combinación de técnicas de detección de objetos y segm
 * **Seguridad y vigilancia**: El sistema puede ser utilizado para detectar armas en imágenes y videos, proporcionando una herramienta valiosa para aplicaciones de seguridad y vigilancia.
 * **Policía**: El sistema puede ser utilizado para analizar imágenes y videos recopilados durante investigaciones, proporcionando una herramienta poderosa para las agencias de policía.
 * **Investigación**: El sistema puede ser utilizado para estudiar la prevalencia de armas en diferentes entornos y contextos, proporcionando información valiosa para investigadores y políticos.
+
+
+**Vistas**
+----------------
+
+* **Imagen de prueba**: ![Imagen de prueba](test_image.jpg)
+* **Resultado de deteccion de armas**: ![Resultados de deteccion de armas](annotated_guns.jpg)
+* **Resultado de deteccion y segmentación de personas**: ![Resultados de deteccion y segmentación de personas](annotated_people.jpg)
+* **Resultado de deteccion de detección combinada**: ![Resultados de deteccion de detección combinada](annotated_combined.jpg)
